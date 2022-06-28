@@ -20,6 +20,46 @@ class Appointments(db.Model):
     pet = db.Column(db.String(100), nullable = False)
     date = db.Column(db.DateTime)
     owner_id = db.Column(db.String, db.ForeignKey('Users.username'))
+    def insert(self):
+        try:
+            db.session.add(self)
+            db.session.commit()
+            return self.id
+        except:
+            db.session.rollback()
+        finally:
+            db.session.close()
+
+    def update(self):
+        try:
+            db.session.commit()
+        except:
+            db.session.rollback()
+        finally:
+            db.session.close()
+
+
+    def delete(self):
+        try:
+            db.session.delete(self)
+            db.session.commit()
+        except:
+            db.session.rollback()
+        finally:
+            db.session.close()
+
+
+    def format(self):
+        return {
+            'id': self.id,
+            'description': self.description,
+            'completed': self.completed,
+            'list_id': self.list_id
+        }
+
+    def __repr__(self):
+        return f'Todo: id={self.id}, description={self.description}'
+
 
 class Users(db.Model):
     __tablename__ = 'Users'
