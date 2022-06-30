@@ -6,6 +6,7 @@
         v-for="apt in appointments"
         :key="apt.aptId"
       >
+      <!-- Delete appointment -->
         <button
           class="me-2 btn btn-sm btn-danger"
           @click="$emit('remove', apt)"
@@ -15,7 +16,8 @@
         </button>
         <div class="w-100">
           <div class="d-flex justify-content-between">
-            <span
+            
+            <span 
               class="h4 text-primary"
               contenteditable="contenteditable"
               @blur="$emit('edit', apt.aptId, 'petName', $event.target.innerText)"
@@ -53,7 +55,7 @@ export default {
   props: ["appointments"],
   methods: {
     formattedDate: function (date) {
-      moment.locale("en-ca");
+      moment.locale("es");
       return moment(new Date(date)).format("lll");
     },
   },

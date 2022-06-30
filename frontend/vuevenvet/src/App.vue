@@ -1,6 +1,6 @@
 <template>
   <div id="main-app" class="container mt-3">
-    <h1 class="fw-bold"><span class="vue-js">Vue.js</span> Pet Appointments</h1>
+    <h1 class="fw-bold"><span class="vue-js">VenVet</span> Pet Appointments</h1>
     <div class="row justify-content-center">
       <add-appointment @add="addItem" />
       <search-appointments
@@ -106,6 +106,6 @@ export default {
   min-width: 340px;
 }
 .vue-js {
-  color: #42b983;
+  color: #424cb9;
 }
 </style>
