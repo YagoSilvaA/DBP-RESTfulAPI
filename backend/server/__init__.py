@@ -1,6 +1,6 @@
-from app.models import setup_db, Users, Appointments
+from models import setup_db, Users, Appointments
 
-from flask import Flask, request
+from flask import Flask, request, Blueprint
 from flask_login import LoginManager, login_manager, login_user, logout_user,login_required, current_user
 from flask_cors import CORS
 
@@ -8,9 +8,11 @@ login_manager = LoginManager()
 
 
 def create_app(test_config=None):
-    app = Flask(_name_)
+    app = Flask(__name__)
     setup_db(app)
     CORS(app)
+
+    api = Blueprint("api", __name__, url_prefix="/api")
 
     login_manager.init_app(app)
 
@@ -38,7 +40,7 @@ def create_app(test_config=None):
         return response
 
   
-    @app.route('/', methods=['GET'])
+    @api.route('/', methods=['GET'])
     def api_index():
         try:
             return {
@@ -51,12 +53,12 @@ def create_app(test_config=None):
                 "message": str(e)
             }, 500
     
-    @app.route('/me', methods=['GET'])
+    @api.route('/me', methods=['GET'])
     @login_required
     def api_me():
         return current_user.format(), 200
 
-    @app.route("/users", methods=["GET"])
+    @api.route("/users", methods=["GET"])
     def get_users():
         users = Users.query.order_by("id").all()
 
@@ -71,14 +73,14 @@ def create_app(test_config=None):
             "total_users": len(users)
         }, 200
 
-    @app.route("/citas", methods=["GET"])
+    @api.route("/citas", methods=["GET"])
     @login_required
     def get_citas():
         return {
-            "citas": [c.format() for c in current_user.transacciones]
+            "citas": [c.format() for c in current_user.citas]
         }, 200
     
-    @app.route("/citas/<id>", methods=["GET"])
+    @api.route("/citas/<id>", methods=["GET"])
     @login_required
     def get_cita(id):
         c = Appointments.query.get(id)
@@ -97,7 +99,7 @@ def create_app(test_config=None):
 
         return c.format(), 200
     
-    @app.route('/signup', methods=['POST'])
+    @api.route('/signup', methods=['POST'])
     def api_signup():
         if current_user.is_authenticated:
             return {
@@ -153,7 +155,7 @@ def create_app(test_config=None):
             return {"success": True}, 200
 
 
-    @app.route('/login', methods=['POST'])
+    @api.route('/login', methods=['POST'])
     def api_login():
         if current_user.is_authenticated:
             return {
@@ -187,13 +189,13 @@ def create_app(test_config=None):
             return {"success": True}, 200
 
 
-    @app.route("/logout", methods=["POST"])
+    @api.route("/logout", methods=["POST"])
     @login_required
     def api_logout():
         logout_user()
         return {"success": True}, 200
 
-    @app.route("/citas", methods=['POST'])
+    @api.route("/citas", methods=['POST'])
     @login_required
     def api_registrar_cita():
         name = request.json.get("name")
@@ -231,7 +233,7 @@ def create_app(test_config=None):
 
     # PATCH / PUT
 
-    @app.route("/citas/<id>", methods=['PATCH'])
+    @api.route("/citas/<id>", methods=['PATCH'])
     @login_required
     def api_editar_cita(id):
         name = request.json.get("name")
@@ -292,7 +294,7 @@ def create_app(test_config=None):
 
     # DELETE
 
-    @app.route("/citas/<id>", methods=['DELETE'])
+    @api.route("/citas/<id>", methods=['DELETE'])
     @login_required
     def api_eliminar_cita(id):
         c = Appointments.query.get(id)
@@ -318,5 +320,7 @@ def create_app(test_config=None):
             }, 400
         else:
             return {"success": True}, 200
+
+    app.register_blueprint(api)
 
     return app
