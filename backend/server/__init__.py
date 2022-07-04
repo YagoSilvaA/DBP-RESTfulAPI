@@ -107,42 +107,42 @@ def create_app(test_config=None):
                 "message": "Usuario ya loggeado"
             }, 400
 
-        name = request.json.get('name')
-        contra = request.json.get('contra')
+        username = request.json.get('username')
+        password = request.json.get('password')
 
-        if name is None:
+        if username is None:
             return {
                 "success": False,
                 "message": "No se ha enviado el nombre"
             }, 400
 
-        if contra is None:
+        if password is None:
             return {
                 "success": False,
                 "message": "No se ha enviado contraseña"
             }, 400
 
 
-        if len(contra) < 8:
+        if len(password) < 8:
             return {
                 "success": False,
                 "message": "La contraseña debe tener minimo 8 caracteres"
             }, 400
     
-        if contra.islower():
+        if password.islower():
             return {
                 "success": False,
                 "message": "La contraseña debe tener minimo una mayúscula"
             }, 400
 
-        if True not in [char.isdigit() for char in contra]:
+        if True not in [char.isdigit() for char in password]:
             return {
                 "success": False,
                 "message": "La contraseña debe tener mínimo un número"
             }, 400
 
         try:
-            u = Users(name, contra)
+            u = Users(username, password)
             u.insert()
             login_user(u)
         except Exception as e:
@@ -157,36 +157,29 @@ def create_app(test_config=None):
 
     @api.route('/login', methods=['POST'])
     def api_login():
-        if current_user.is_authenticated:
-            return {
-                "success": False,
-                "message": "Usuario ya loggeado"
-            }, 400
+        if request.method == 'POST':
+            username = request.json.get("username")
+            password = request.json.get("password")
 
-        name = request.json.get('nombre')
-        contra = request.json.get('contra')
+            user = Users.query.filter_by(username=username).first()
 
-        if contra is None:
-            return {
-                "success": False,
-                "message": "No se ha enviado contraseña"
-            }, 400
-        
-        u = Users.query.filter(Users.username == name).first()
-        
-        if not u:
-            return {
-                "success": False,
-                "message": "El usuario no existe"
-            }, 404
-        elif not u.check_password(contra):
-            return {
-                "success": False,
-                "message": "Contraseña incorrecta"
-            }, 400
-        else:
-            login_user(u)
-            return {"success": True}, 200
+            if user:
+                if user.password==password:
+                    login_user(user, remember=True)
+                    return {
+                        "success": True,
+                        "message": "Usuario autenticado correctamente"
+                    }
+                else:
+                    return {
+                        "success": False,
+                        "message": "Contraseña incorrecta"
+                    }, 401
+            else:
+                return {
+                    "success": False,
+                    "message": "Usuario no encontrado"
+                }, 404
 
 
     @api.route("/logout", methods=["POST"])

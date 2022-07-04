@@ -5,7 +5,7 @@ from flask_login import LoginManager, login_user, logout_user,login_required, cu
 
 
 database_name='appointments'
-database_path="postgresql://{}:{}@{}/{}".format('postgres', '123456789','localhost:5432', database_name)
+database_path="postgresql://{}:{}@{}/{}".format('postgres', 'alegaray274','localhost:5432', database_name)
 #'postgresql+psycopg2://postgres@localhost:5432/todoapp20db'
 
 db = SQLAlchemy()
@@ -25,14 +25,14 @@ def setup_db(app, database_path=database_path):
 # Models
 
 
-class Users(db.Model):
+class Users(db.Model, UserMixin):
     __tablename__ = 'usuarios'
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(50), nullable = False, unique = True)
     password = db.Column(db.String(150), nullable = False)
     citas = db.relationship('Appointments', backref='usuarios')
 
-    def _init_(self, username, password):
+    def __init__(self, username, password):
         self.username = username
         self.password = bcrypt.generate_password_hash(password).decode('utf-8')
 
@@ -63,7 +63,7 @@ class Users(db.Model):
         finally:
             db.session.close()
 
-    def _repr_(self):
+    def __repr__(self):
         return f'User: id={self.id}, username={self.username}'
 
     def format(self):
@@ -110,7 +110,7 @@ class Appointments(db.Model):
         finally:
             db.session.close()
     
-    def _init_(self,name, pet,date, owr):
+    def __init__(self,name, pet,date, owr):
         self.name=name
         self.pet=pet
         self.date=date
@@ -124,6 +124,6 @@ class Appointments(db.Model):
             'owner_id': self.owner_id
         }
 
-    def _repr_(self):
+    def __repr__(self):
         return f'Todo: id={self.id}, description={self.description}'
 
