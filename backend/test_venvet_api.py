@@ -18,7 +18,7 @@ class TestAppointmentApp(unittest.TestCase):
         self.new_appointment = {
             'name': 'Firulais',
             'pet': 'Perro',
-            'date': '2022-03-04T23:28:56.782Z',
+            'date': '2022-03-04T23:28:56.782',
             'owner_id': 1
         }
         self.new_user = {
@@ -136,10 +136,64 @@ class TestAppointmentApp(unittest.TestCase):
         self.assertEqual(res.status_code, 400)
         self.assertEqual(data["success"], False)
         self.assertEqual(data["message"], "La contraseña debe tener minimo 8 caracteres")
+    
+    def test_signup_wrong_password_c3(self):
+        res = self.client().post('/api/signup',json={'username': 'prueba', 'password': 'Pass'})
+        data = json.loads(res.data)
 
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["message"], "La contraseña debe tener minimo 8 caracteres")
+    
+    def test_signup_wrong_password_c4(self):
+        res = self.client().post('/api/signup',json={'username': 'prueba', 'password': 'pass'})
+        data = json.loads(res.data)
 
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["message"], "La contraseña debe tener minimo 8 caracteres")
+
+    def test_signup_wrong_password_c5(self):
+        res = self.client().post('/api/signup',json={'username': 'prueba', 'password': 'Password'})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["message"], "La contraseña debe tener mínimo un número")
+
+    def test_signup_wrong_password_no_un(self):
+        res = self.client().post('/api/signup',json={'password': 'Password1'})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["message"], "No se ha enviado el nombre")
+
+    def test_signup_wrong_password_no_pw(self):
+        res = self.client().post('/api/signup',json={'username': 'prueba'})
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 400)
+        self.assertEqual(data["success"], False)
+        self.assertEqual(data["message"], "No se ha enviado contraseña")
+    
+    def test_login(self):
         
-      
+        res = self.client().post('/api/login',json=self.new_user)
+        data = json.loads(res.data)
+
+        self.assertEqual(res.status_code, 401)
+        self.assertEqual(data["success"],False)
+        self.assertEqual(data["message"], "Contraseña incorrecta")
+    
+    def test_logout(self):
+        res1 = self.client().post('/api/logout', json=self.new_user)
+        data1 = json.loads(res1.data) 
+
+        self.assertEqual(res1.status_code, 401)
+        self.assertFalse(data1['success'])
+    
+
        
 
        
