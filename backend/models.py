@@ -5,7 +5,7 @@ from flask_login import LoginManager, login_user, logout_user,login_required, cu
 
 
 database_name='appointments'
-database_path="postgresql://{}:{}@{}/{}".format('postgres', 'alegaray274','localhost:5432', database_name)
+database_path="postgresql://{}:{}@{}/{}".format('postgres', '123456789','localhost:5432', database_name)
 #'postgresql+psycopg2://postgres@localhost:5432/todoapp20db'
 
 db = SQLAlchemy()

@@ -1,6 +1,6 @@
 <template>
   <div id="main-app" class="container mt-3">
-    <h1 class="fw-bold"><span class="vue-js">VenVet</span> Pet Appointments</h1>
+    <h1 class="fw-bold"><span class="venvet">VenVet</span> Pet Appointments</h1>
     <div class="row justify-content-center">
       <add-appointment @add="addItem" />
       <search-appointments
@@ -26,6 +26,7 @@ import _ from "lodash";
 import AppointmentList from "./components/AppointmentList";
 import AddAppointment from "./components/AddAppointment.vue";
 import SearchAppointments from "./components/SearchAppointments.vue";
+import Navigation from "./components/Navigation"
 
 export default {
   name: "MainApp",
@@ -42,6 +43,7 @@ export default {
     AppointmentList,
     AddAppointment,
     SearchAppointments,
+    Navigation,
   },
   mounted() {
     axios.get("./data/appointments.json").then(
@@ -105,7 +107,24 @@ export default {
 .container {
   min-width: 340px;
 }
-.vue-js {
+.venvet {
   color: #424cb9;
+}
+
+body,
+html {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+#app {
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+  background: #e0ddda;
+  width: 100%;
+  height: 100%;
 }
 </style>

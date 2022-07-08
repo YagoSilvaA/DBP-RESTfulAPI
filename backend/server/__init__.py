@@ -169,7 +169,7 @@ def create_app(test_config=None):
                     return {
                         "success": True,
                         "message": "Usuario autenticado correctamente"
-                    }
+                    }, 200
                 else:
                     return {
                         "success": False,
