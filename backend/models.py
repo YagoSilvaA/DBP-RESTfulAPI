@@ -5,7 +5,7 @@ from flask_login import LoginManager, login_user, logout_user,login_required, cu
 
 
 database_name='appointments'
-database_path="postgresql://{}:{}@{}/{}".format('postgres', '123456789','localhost:5432', database_name)
+database_path="postgresql://{}:{}@{}/{}".format('postgres', '2000','localhost:5432', database_name)
 #'postgresql+psycopg2://postgres@localhost:5432/todoapp20db'
 
 db = SQLAlchemy()
@@ -30,11 +30,11 @@ class Users(db.Model, UserMixin):
     id = db.Column(db.Integer, primary_key = True)
     username = db.Column(db.String(50), nullable = False, unique = True)
     password = db.Column(db.String(150), nullable = False)
-    citas = db.relationship('Appointments', backref='usuarios')
+    owner = db.relationship('Appointments', backref='usuarios', passive_deletes=True)
 
     def __init__(self, username, password):
         self.username = username
-        self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+        self.password = password
 
     def insert(self):
         try:
@@ -78,10 +78,13 @@ class Users(db.Model, UserMixin):
 class Appointments(db.Model):
     __tablename__ = 'citas'
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100), nullable = False)
-    pet = db.Column(db.String(100), nullable = False)
-    date = db.Column(db.DateTime)
-    owner_id = db.Column(db.Integer, db.ForeignKey('usuarios.id'), nullable = False)
+    petOwner = db.Column(db.String(100), nullable = False)
+    petName = db.Column(db.String(100), nullable = False)
+    aptDate = db.Column(db.String(100), nullable = False)
+    aptNotes = db.Column(db.String(100), nullable = False)
+    owner_id = db.Column(db.Integer, db.ForeignKey('usuarios.id', ondelete="CASCADE"), nullable=False)
+
+
     def insert(self):
         try:
             db.session.add(self)
@@ -110,20 +113,20 @@ class Appointments(db.Model):
         finally:
             db.session.close()
     
-    def __init__(self,name, pet,date, owr):
-        self.name=name
-        self.pet=pet
-        self.date=date
+    def __init__(self,petOwner, petName,aptDate,aptNotes,owner_id):
+        self.petOwner=petOwner
+        self.petName=petName
+        self.aptDate=aptDate
+        self.aptNotes=aptNotes
+        self.owner_id=owner_id
         
     def format(self):
         return {
             'id': self.id,
-            'name': self.name,
-            'pet': self.pet,
-            'date': self.date,
-            'owner_id': self.owner_id
+            'petOwner': self.petOwner,
+            'petName': self.petName,
+            'aptDate': self.aptDate,
+            'aptNotes':self.aptNotes,
+            'owner_id':self.owner_id
         }
-
-    def __repr__(self):
-        return f'Todo: id={self.id}, description={self.description}'
 

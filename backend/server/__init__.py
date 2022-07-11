@@ -1,20 +1,51 @@
 from models import setup_db, Users, Appointments
-
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
 from flask import Flask, request, Blueprint
 from flask_login import LoginManager, login_manager, login_user, logout_user,login_required, current_user
 from flask_cors import CORS
+from flask import Flask, Blueprint, jsonify, redirect, render_template, request, flash
+from flask.helpers import url_for
+from werkzeug.security import generate_password_hash, check_password_hash
 
 login_manager = LoginManager()
 
 
 def create_app(test_config=None):
     app = Flask(__name__)
+    app.config["JWT_SECRET_KEY"] = 'Hola1$'
+    app.config["JWT_ACCESS_TOKEN_EXPIRES"] = False
     setup_db(app)
-    CORS(app)
+    CORS(app,origins=['http://localhost:8082'])
 
     api = Blueprint("api", __name__, url_prefix="/api")
-
+    jwt = JWTManager(app)
     login_manager.init_app(app)
+
+    @jwt.expired_token_loader
+    def expired_token_callback():
+        return jsonify({
+            'description': 'The token has expired.',
+            'error': 'token_expired'
+        }), 401
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return Users.query.get(user_id)
+
+    @login_manager.unauthorized_handler
+    def noautorizado():
+        if request.path.startswith(api.url_prefix):
+            return {
+                "success": False,
+                "message": "Usuario no loggeado"
+            }, 401
+        else:
+            flash("Primero debes registrarte")
+            return redirect(url_for("/login"))
+
+    @login_manager.user_loader
+    def load_user(user_id):
+        return Users.query.get(user_id)
 
     @login_manager.user_loader
     def load_user(user_id):
@@ -54,7 +85,7 @@ def create_app(test_config=None):
             }, 500
     
     @api.route('/me', methods=['GET'])
-    @login_required
+    @jwt_required()
     def api_me():
         return current_user.format(), 200
 
@@ -73,15 +104,16 @@ def create_app(test_config=None):
             "total_users": len(users)
         }, 200
 
-    @api.route("/citas", methods=["GET"])
-    @login_required
+    @api.route("/citas1", methods=["GET"])
     def get_citas():
+        
+        users = Appointments.query.order_by("id").all()
         return {
-            "citas": [c.format() for c in current_user.citas]
+            "citas": [c.format() for c in users]
         }, 200
     
     @api.route("/citas/<id>", methods=["GET"])
-    @login_required
+    @jwt_required()
     def get_cita(id):
         c = Appointments.query.get(id)
 
@@ -142,9 +174,10 @@ def create_app(test_config=None):
             }, 400
 
         try:
-            u = Users(username, password)
-            u.insert()
-            login_user(u)
+            user = Users(username=username, password=generate_password_hash(password, method='sha256'))
+            user.insert()
+            login_user(user)
+            token = create_access_token(identity=user.id)
         except Exception as e:
             return {
                 "success": False,
@@ -152,23 +185,25 @@ def create_app(test_config=None):
                 "error": str(e)
             }, 400
         else:
-            return {"success": True}, 200
+            return {"success": True, "token":token}, 200
 
 
     @api.route('/login', methods=['POST'])
     def api_login():
         if request.method == 'POST':
             username = request.json.get("username")
-            password = request.json.get("password")
+            password1 = request.json.get("password")
 
             user = Users.query.filter_by(username=username).first()
 
             if user:
-                if user.password==password:
+                if check_password_hash(user.password, password1):
+                    token = create_access_token(identity=user.id)
                     login_user(user, remember=True)
                     return {
                         "success": True,
-                        "message": "Usuario autenticado correctamente"
+                        "message": "Usuario autenticado correctamente",
+                        "token": token
                     }, 200
                 else:
                     return {
@@ -189,32 +224,32 @@ def create_app(test_config=None):
         return {"success": True}, 200
 
     @api.route("/citas", methods=['POST'])
-    @login_required
     def api_registrar_cita():
-        name = request.json.get("name")
-        pet = request.json.get("pet")
-        date = request.json.get("date")
+        petOwner = request.json.get("petOwner")
+        petName = request.json.get("petName")
+        aptDate = request.json.get("aptDate")
+        aptNotes = request.json.get("aptNotes")
 
-        if name is None:
+        if petOwner is None:
             return {
                 "success": False,
                 "message": "No se ha enviado el nombre"
             }, 400
 
-        if pet is None:
+        if petName is None:
             return {
                 "success": False,
                 "message": "No se ha enviado la raza de la mascota"
             }, 400
     
-        if date is None:
+        if aptDate is None:
             return {
                 "success": False,
                 "message": "No se ha enviado la fecha"
             }, 400
 
         try:
-            c = Appointments(user_id=current_user.id, name=name, pet=pet, date=date)
+            c = Appointments(owner_id= 1, petOwner=petOwner, petName=petName, aptDate=aptDate,aptNotes=aptNotes)
             c.insert()
         except:
             return {
@@ -229,9 +264,9 @@ def create_app(test_config=None):
     @api.route("/citas/<id>", methods=['PATCH'])
     @login_required
     def api_editar_cita(id):
-        name = request.json.get("name")
-        pet = request.json.get("pet")
-        date = request.json.get("date")
+        petOwner = request.json.get("petOwner")
+        petName = request.json.get("petName")
+        aptDate = request.json.get("aptDate")
     
         c = Appointments.query.get(id)
 
@@ -247,27 +282,27 @@ def create_app(test_config=None):
                 "message": "La cita no le pertenece a este usuario"
             }, 403
 
-        if name is not None:
+        if petOwner is not None:
             try: 
-                c.name = name
+                c.petOwner = petOwner
             except:
                 return {
                     "success": False,
                     "message": "Error al actualizar el nombre"
                 }, 400
 
-        if pet is not None:
+        if petName is not None:
             try: 
-                c.pet = pet
+                c.petName = petName
             except:
                 return {
                     "success": False,
                     "message": "Error al actualizar la raza de la"
                 }, 400
 
-        if date is not None:
+        if aptDate is not None:
             try: 
-                c.date = date
+                c.aptDate = aptDate
             except:
                 return {
                     "success": False,
@@ -287,9 +322,10 @@ def create_app(test_config=None):
 
     # DELETE
 
-    @api.route("/citas/<id>", methods=['DELETE'])
-    @login_required
-    def api_eliminar_cita(id):
+    @api.route("/citas12", methods=['POST'])
+    
+    def api_eliminar_cita():
+        id = request.json.get("id")
         c = Appointments.query.get(id)
 
         if c is None:
@@ -298,11 +334,6 @@ def create_app(test_config=None):
                 "message": "Cita no encontrada"
             }, 404
 
-        if c.user_id != current_user.id:
-            return {
-                "success": False,
-                "message": "La cita no le pertenece a este usuario"
-            }, 403
 
         try:
             c.delete()
