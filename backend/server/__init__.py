@@ -203,7 +203,8 @@ def create_app(test_config=None):
                     return {
                         "success": True,
                         "message": "Usuario autenticado correctamente",
-                        "token": token
+                        "token": token,
+                        "id": user.id
                     }, 200
                 else:
                     return {
@@ -229,6 +230,7 @@ def create_app(test_config=None):
         petName = request.json.get("petName")
         aptDate = request.json.get("aptDate")
         aptNotes = request.json.get("aptNotes")
+        id = request.json.get("id")
 
         if petOwner is None:
             return {
@@ -249,7 +251,7 @@ def create_app(test_config=None):
             }, 400
 
         try:
-            c = Appointments(owner_id= 1, petOwner=petOwner, petName=petName, aptDate=aptDate,aptNotes=aptNotes)
+            c = Appointments(owner_id= id, petOwner=petOwner, petName=petName, aptDate=aptDate,aptNotes=aptNotes)
             c.insert()
         except:
             return {

@@ -97,6 +97,7 @@ export default {
         })
         .then(() => {
           localStorage.removeItem("token");
+          localStorage.removeItem("id");
           this.$router.push("/");
         })
         .catch((error) => {
