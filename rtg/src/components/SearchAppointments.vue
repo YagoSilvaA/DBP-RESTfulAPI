@@ -19,65 +19,6 @@
       >
         Sort by
       </button>
-
-      <ul class="dropdown-menu dropdown-menu-end">
-        <li>
-          <a
-            href="#"
-            class="dropdown-item d-flex justify-content-between align-items-center"
-            id="petName"
-            @click="$emit('requestKey', 'petName')"
-          >
-            Pet name
-            <fa-icon icon="check" v-if="searchKey === 'petName'" />
-          </a>
-        </li>
-        <li>
-          <a
-            href="#"
-            class="dropdown-item d-flex justify-content-between align-items-center"
-            id="aptDate"
-            @click="$emit('requestKey', 'aptDate')"
-          >
-            Date
-            <fa-icon icon="check" v-if="searchKey === 'aptDate'" />
-          </a>
-        </li>
-        <li>
-          <a
-            href="#"
-            class="dropdown-item d-flex justify-content-between align-items-center"
-            id="petOwner"
-            @click="$emit('requestKey', 'petOwner')"
-          >
-            Owner
-            <fa-icon icon="check" v-if="searchKey === 'petOwner'" />
-          </a>
-        </li>
-        <li><hr class="dropdown-divider" /></li>
-        <li>
-          <a
-            href="#"
-            class="dropdown-item d-flex justify-content-between align-items-center"
-            id="asc"
-            @click="$emit('requestDirection', 'asc')"
-          >
-            Asc
-            <fa-icon icon="check" v-if="searchDirection === 'asc'" />
-          </a>
-        </li>
-        <li>
-          <a
-            href="#"
-            class="dropdown-item d-flex justify-content-between align-items-center"
-            id="desc"
-            @click="$emit('requestDirection', 'desc')"
-          >
-            Desc
-            <fa-icon icon="check" v-if="searchDirection === 'desc'" />
-          </a>
-        </li>
-      </ul>
     </div>
   </div>
 </template>

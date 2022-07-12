@@ -15,7 +15,7 @@ def create_app(test_config=None):
     app.config["JWT_SECRET_KEY"] = 'Hola1$'
     app.config["JWT_ACCESS_TOKEN_EXPIRES"] = False
     setup_db(app)
-    CORS(app,origins=['http://localhost:8082'])
+    CORS(app,origins=['http://localhost:8080'])
 
     api = Blueprint("api", __name__, url_prefix="/api")
     jwt = JWTManager(app)
@@ -218,7 +218,7 @@ def create_app(test_config=None):
 
 
     @api.route("/logout", methods=["POST"])
-    @login_required
+    
     def api_logout():
         logout_user()
         return {"success": True}, 200

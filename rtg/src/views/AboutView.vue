@@ -1,5 +1,6 @@
 <template>
   <div id="main-app" class="container mt-3">
+    <button @click="logOut">Log out</button>
     <h1 class="fw-bold"><span class="vue-js">VenVet</span> Pet Appointments</h1>
     <div class="row justify-content-center">
       <add-appointment @add="addItem" />
@@ -46,12 +47,12 @@ export default {
   },
   mounted() {
     let vue = this;
-    axios.get("http://localhost:5000/api/citas1").then(function (response) {
+    axios.get("http://127.0.0.1:5000/api/citas1").then(function (response) {
       vue.apo = response.data.citas;
       console.log(vue.posts);
     });
 
-    axios.get("http://localhost:5000/api/citas1").then(
+    axios.get("http://127.0.0.1:5000/api/citas1").then(
       (response) =>
         (this.appointments = response.data.citas.map((item) => {
           item.aptId = this.aptIndex;
@@ -59,6 +60,11 @@ export default {
           return item;
         }))
     );
+
+    let user = localStorage.getItem("token");
+    if (!user) {
+      this.$router.push("/signup");
+    }
   },
   computed: {
     searchedApts: function () {
@@ -81,10 +87,33 @@ export default {
     },
   },
   methods: {
+    logOut() {
+      axios
+        .post("http://127.0.0.1:5000/api/logout", null, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: "Bearer " + localStorage.getItem("token"),
+          },
+        })
+        .then(() => {
+          localStorage.removeItem("token");
+          this.$router.push("/");
+        })
+        .catch((error) => {
+          this.fail.mensaje = error.response.data.message;
+          this.fail.show = true;
+        });
+    },
     removeItem: function (apt, id) {
       axios.post("http://127.0.0.1:5000/api/citas12", {
         id: id,
       });
+
+      axios.get("http://127.0.0.1:5000/api/citas1").then(function (response) {
+        this.apo = response.data.citas;
+        console.log(this.posts);
+      });
+
       this.appointments = _.without(this.appointments, apt);
     },
     editItem: function (id, field, text) {
