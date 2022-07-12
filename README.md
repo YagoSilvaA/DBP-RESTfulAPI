@@ -1,17 +1,15 @@
-Readme
-
-Nombre del proyecto: Veterinaria Venvet
+Nombre del proyecto: Control de citas para veterinarias: Venvet
 Integrantes:
 * Yago Silva Albarracin
 * Alejandro Martín Garay Saavedra
 * Cesar Enrique Cabezas Baquerizo
 
 Descripción del proyecto.
-El proyecto tiene como finalidad el crear una plataforma para llevar a cabo el control de citas dentro de una veterinaria.  Esta contara con una sección donde se pondrán visualizar todas las citas así como las fecha y la hora, también se dará a conocer la información del animal, como nombre y especie.
+El proyecto tiene como finalidad el crear una plataforma para llevar a cabo el control de citas dentro de una veterinaria.  Esta contara con una sección donde se pondrán visualizar todas las citas así como las fecha y la hora, también se dará a conocer la información del animal, como nombre y especie para que los empleados de la institución puedan digitalizar el control de citas. 
 Objetivos principales
-El proyecto tiene como objetivo principal el poder solucionar el problema de no tener un buen control de citas en veterinarias, se planea implementar una plataforma en la cual la entidad pueda avisar al cliente de cuando se agendó la cita y si se llegara a cambiar la fecha notificarle.
+El proyecto tiene como objetivo principal el poder solucionar el problema de no tener un buen control de citas en veterinarias, se planea implementar una plataforma en la cual la entidad pueda avisar al cliente de cuando se agenda la cita y si se llegara a cambiar la fecha notificarle. De esta forma facilitando él acceso a la información para tener un proceso interno de servicio más eficiente. 
 Misión
-Brindar una plataforma de registros eficiente y prácticos de manera local para veterinarias innovadoras.
+Brindar una plataforma de registros eficiente y práctica de manera local para veterinarias innovadoras.
 
 Visión
 Tener una plataforma eficiente y de fácil acceso para brindar un servicio de buena calidad e innovar el sistema de citas en las veterinarias del Perú.
