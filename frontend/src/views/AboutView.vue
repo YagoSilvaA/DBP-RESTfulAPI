@@ -110,13 +110,13 @@ export default {
         id: id,
       });
 
-      axios.get("http://127.0.0.1:5000/api/citas1").then(function (response) {
-        this.apo = response.data.citas;
-        console.log(this.posts);
-      });
-
       this.appointments = _.without(this.appointments, apt);
-      location.reload();
+
+      let vue = this;
+      axios.get("http://127.0.0.1:5000/api/citas1").then(function (response) {
+        vue.appointments = response.data.citas;
+        console.log(vue.posts);
+      });
     },
     editItem: function (id, field, text) {
       const aptIndex = _.findIndex(this.appointments, {
