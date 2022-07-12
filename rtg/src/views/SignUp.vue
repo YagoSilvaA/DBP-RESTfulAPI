@@ -8,7 +8,7 @@
     <h1>Sign UP</h1>
     <input type="text" v-model="username" placeholder="Usuario" />
     <input type="password" v-model="password" placeholder="Password" />
-    <button v-on:click="signup1">log in</button>
+    <br /><button v-on:click="signup1">Sign Up</button>
   </div>
 </template>
 

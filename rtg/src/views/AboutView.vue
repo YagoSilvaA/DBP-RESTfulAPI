@@ -116,6 +116,7 @@ export default {
       });
 
       this.appointments = _.without(this.appointments, apt);
+      location.reload();
     },
     editItem: function (id, field, text) {
       const aptIndex = _.findIndex(this.appointments, {
