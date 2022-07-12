@@ -1,6 +1,7 @@
 <template>
   <div class="col-12 col-md-10 col-lg-7">
     <div class="input-group my-3">
+      <br />
       <input
         id="SearchApts"
         placeholder="Search"

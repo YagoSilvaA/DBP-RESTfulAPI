@@ -1,18 +1,14 @@
 <template>
   <div class="col-12 col-md-10 col-lg-7">
     <div class="list-group list-group-flush">
-      <div
-        class="list-group-item d-flex align-items-start py-4"
-        v-for="apt in appointments"
-        :key="apt"
-      >
+      <div v-for="apt in appointments" :key="apt">
         <!-- Delete appointment -->
         <button
           class="me-2 btn btn-sm btn-danger"
           @click="$emit('remove', apt.aptId, apt.id)"
           aria-label="Remove Appointment"
         >
-          <fa-icon icon="trash" />
+          x
         </button>
         <div class="w-100">
           <div class="d-flex justify-content-between">

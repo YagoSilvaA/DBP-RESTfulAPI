@@ -9,7 +9,9 @@
         role="button"
         :aria-pressed="hidepanel ? 'false' : 'true'"
       >
-        <fa-icon icon="plus" class="me-3" />Add Appointment
+        <fa-icon icon="plus" class="me-3" />
+        <button><b>Add Appointment</b></button>
+        <br />
       </div>
 
       <transition>
