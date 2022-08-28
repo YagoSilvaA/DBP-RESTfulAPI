@@ -1,4 +1,4 @@
-***R markdown***
+superindice^2^
 
 Nombre del proyecto: Control de citas para veterinarias: Venvet
 Integrantes:
